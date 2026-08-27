@@ -1,0 +1,4 @@
+# argocd-rbac-cm ConfigMap, policy.csv key
+p, role:snipeit-operator, applications, sync, snipeit-project/*, allow
+p, role:snipeit-operator, applications, get, snipeit-project/*, allow
+g, betx-platform-team, role:snipeit-operator

@@ -1,0 +1,50 @@
+image:
+  repository: snipe/snipe-it
+  tag: "v7.1.9"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1   # see companion doc §3.2 — pinned by RWO storage, not a template limitation
+
+app:
+  url: "https://assets.internal.lan"
+  timezone: "UTC"
+  debug: false
+
+mysql:
+  image: mysql:8.0
+  storage: 20Gi
+  storageClassName: local-path
+
+storage:
+  size: 50Gi
+  storageClassName: local-path
+
+redis:
+  image: redis:7-alpine
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: "assets.internal.lan"
+  tlsSecretName: snipeit-tls
+  clusterIssuer: "internal-ca-issuer"
+
+resources:
+  app:
+    requests: { cpu: 250m, memory: 512Mi }
+    limits: { cpu: 1, memory: 1Gi }
+  mysql:
+    requests: { cpu: 250m, memory: 512Mi }
+    limits: { cpu: 1, memory: 1Gi }
+
+# ── Vault / External Secrets Operator integration — see §6 of the CI/CD guide ──
+# When true, charts/snipeit/templates/external-secret.yaml renders ExternalSecret
+# objects that pull mysql-app-secret / snipeit-app-secret from Vault via the
+# vault-backend SecretStore (argocd/vault-secretstore.yaml). When false, those
+# Secret objects must be provisioned some other way before this chart is installed
+# (e.g. Sealed Secrets or apply-time generation, per the companion document).
+vault:
+  enabled: true
+
+# NOTE: no actual secret value belongs in this file — see §2.3 / §6.1.
+# Deliberately absent from `values.yaml`: any actual secret value.

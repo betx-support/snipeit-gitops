@@ -1,0 +1,18 @@
+# Headless Service (clusterIP: None) — required by the StatefulSet in
+# mysql-statefulset.yaml for stable per-pod DNS, and gives the app a
+# predictable DB_HOST value ("mysql") used in configmap.yaml.
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snipeit.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  selector:
+    app: mysql
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: 3306

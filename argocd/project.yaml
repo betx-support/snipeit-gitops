@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: snipeit-project
+  namespace: argocd
+spec:
+  sourceRepos:
+    - https://github.com/betx-support/snipeit-gitops.git
+  destinations:
+    - namespace: snipeit
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist: []   # explicitly empty — see rationale below
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

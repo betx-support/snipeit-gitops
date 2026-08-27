@@ -1,0 +1,24 @@
+# Production environment overrides.
+#
+# This file is the one referenced by:
+#   - argocd/application.yaml → spec.source.helm.valueFiles
+#   - Jenkinsfile             → `helm template ... -f charts/snipeit/values-production.yaml`
+#
+# Only values that differ from charts/snipeit/values.yaml need to appear here —
+# Helm merges this on top of the base values.yaml at render time.
+#
+# TODO: fill in with actual production-specific overrides (image tag pins,
+# resource limits, ingress host, etc.) — the base companion design document
+# ("Snipe-IT on Kubernetes — Technical Design & Operations Reference") is the
+# source of truth for what production's real values should be; none were
+# specified in the CI/CD integration document this repo was generated from,
+# so this file intentionally mirrors values.yaml until those are supplied.
+
+image:
+  tag: "v7.1.9"
+
+ingress:
+  host: "assets.internal.lan"
+
+vault:
+  enabled: true

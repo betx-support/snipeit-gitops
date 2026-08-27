@@ -1,0 +1,28 @@
+# argocd-server listens on plain HTTP internally because it was installed
+# with configs.params."server.insecure"=true (§5.1) — TLS is meant to
+# terminate here, at ingress-nginx, using the internal CA, not doubled up
+# inside ArgoCD itself.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server
+  namespace: argocd
+  annotations:
+    cert-manager.io/cluster-issuer: "internal-ca-issuer"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: ["argocd.internal.lan"]
+      secretName: argocd-tls
+  rules:
+    - host: argocd.internal.lan
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 80

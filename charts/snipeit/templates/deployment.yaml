@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      initContainers:
+        - name: migrate
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["php", "artisan", "migrate", "--force"]
+          envFrom:
+            - configMapRef: { name: snipeit-config }
+            - secretRef: { name: snipeit-app-secret }
+          volumeMounts:
+            - name: snipeit-storage
+              mountPath: /var/lib/snipeit/storage
+      containers:
+        - name: snipeit
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          resources: {{ toYaml .Values.resources.app | nindent 12 }}
+          envFrom:
+            - configMapRef: { name: snipeit-config }
+            - secretRef: { name: snipeit-app-secret }
+          volumeMounts:
+            - name: snipeit-storage
+              mountPath: /var/lib/snipeit/storage
+      volumes:
+        - name: snipeit-storage
+          persistentVolumeClaim:
+            claimName: snipeit-storage-pvc

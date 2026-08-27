@@ -1,0 +1,19 @@
+# Not strictly required when deployed via ArgoCD — argocd/application.yaml
+# already sets syncOptions: [CreateNamespace=true] (§5.3), which creates the
+# namespace before the rest of the chart is applied. This template is kept
+# anyway so `helm install`/`helm template` works standalone (§3 Step 5's
+# lint/dry-run, or anyone installing this chart without ArgoCD) without
+# depending on that out-of-band step. Creating it in both places is
+# harmless — Kubernetes namespace creation is idempotent.
+#
+# CAUTION: if this ever causes a "namespace already exists" or ownership
+# conflict under ArgoCD specifically (a known Helm+ArgoCD interaction, since
+# ArgoCD's CreateNamespace and a chart-managed Namespace object can both
+# claim ownership of the same resource), drop this file and rely on
+# syncOptions: [CreateNamespace=true] alone rather than fighting both paths.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Release.Namespace }}
+  labels:
+    {{- include "snipeit.labels" . | nindent 4 }}

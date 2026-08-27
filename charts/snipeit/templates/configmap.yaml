@@ -1,0 +1,22 @@
+# Non-secret configuration only — anything sensitive goes through
+# mysql-app-secret / snipeit-app-secret (Vault-backed, §6) instead.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: snipeit-config
+  namespace: {{ .Release.Namespace }}
+data:
+  APP_URL: {{ .Values.app.url | quote }}
+  APP_TIMEZONE: {{ .Values.app.timezone | quote }}
+  APP_DEBUG: {{ .Values.app.debug | quote }}
+  DB_CONNECTION: "mysql"
+  DB_HOST: "mysql"
+  DB_PORT: "3306"
+  DB_DATABASE: "snipeit"
+  DB_USERNAME: "snipeit"
+  MYSQL_DATABASE: "snipeit"
+  MYSQL_USER: "snipeit"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  CACHE_DRIVER: "redis"
+  SESSION_DRIVER: "redis"

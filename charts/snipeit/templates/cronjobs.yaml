@@ -1,0 +1,36 @@
+# Snipe-IT, like any Laravel app, needs its task scheduler invoked every
+# minute (`php artisan schedule:run`) — this drives things like scheduled
+# report emails and cleanup tasks. Uses the same image/config/secret as
+# deployment.yaml so it never drifts out of sync with what the app itself
+# is running.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-scheduler
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snipeit.labels" . | nindent 4 }}
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: scheduler
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              command: ["php", "artisan", "schedule:run"]
+              envFrom:
+                - configMapRef: { name: snipeit-config }
+                - secretRef: { name: snipeit-app-secret }
+              volumeMounts:
+                - name: snipeit-storage
+                  mountPath: /var/lib/snipeit/storage
+          volumes:
+            - name: snipeit-storage
+              persistentVolumeClaim:
+                claimName: snipeit-storage-pvc

@@ -1,0 +1,20 @@
+# Port 80 matches the upstream snipe/snipe-it image's default Apache
+# listener (deployment.yaml's container spec doesn't declare containerPort
+# explicitly, but Kubernetes Services don't require the source Pod to
+# declare one either — targetPort just needs to match what the container
+# actually listens on).
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snipeit.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Release.Name }}
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

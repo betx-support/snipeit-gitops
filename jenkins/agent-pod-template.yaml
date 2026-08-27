@@ -1,0 +1,12 @@
+# §4.2 — Configure via Jenkins' Helm values (agent.podTemplates.default),
+# or in the UI under Manage Jenkins → Clouds. Fresh Pod per build, deleted
+# after — not an always-on static agent.
+agent:
+  podTemplates:
+    default: |
+      - name: helm-agent
+        containers:
+        - name: helm
+          image: alpine/helm:3.14.0
+          command: ["cat"]
+          tty: true

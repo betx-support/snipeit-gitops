@@ -1,0 +1,27 @@
+# isCA: true is what makes this a CA certificate rather than a normal
+# leaf/server certificate — cert-manager writes both the cert and its
+# private key into the Secret named below (internal-ca-key-pair), which
+# 03-internal-ca-clusterissuer.yaml then references as the signing
+# material for every other certificate issued in the cluster.
+#
+# duration: 10 years is deliberately long — this is a root, and rotating a
+# root CA is a much bigger operation (re-trusting it on every client) than
+# rotating a leaf cert, so it shouldn't need attention often.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: internal-ca
+  namespace: cert-manager
+spec:
+  isCA: true
+  commonName: "BetXchange Internal CA"
+  secretName: internal-ca-key-pair
+  duration: 87600h    # 10 years
+  renewBefore: 720h   # 30 days
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-bootstrap
+    kind: Issuer
+    group: cert-manager.io

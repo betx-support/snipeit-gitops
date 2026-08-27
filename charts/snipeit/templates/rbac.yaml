@@ -1,0 +1,19 @@
+# snipeit-eso: referenced by name in argocd/vault-secretstore.yaml
+# (spec.provider.vault.auth.kubernetes.serviceAccountRef) and in
+# vault/04-kubernetes-auth.sh's role binding
+# (bound_service_account_names=snipeit-eso). Nothing else in the source
+# documents created this ServiceAccount — without it, ESO has no identity
+# to present to Vault's Kubernetes auth method and every ExternalSecret
+# will fail to sync.
+{{- if .Values.vault.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: snipeit-eso
+  namespace: {{ .Release.Namespace }}
+{{- end }}
+
+---
+# TODO: any additional Role/RoleBinding for the snipeit application's own
+# pods (as opposed to ESO's Vault auth above) wasn't specified in either
+# source document — add here if the companion design doc calls for one.

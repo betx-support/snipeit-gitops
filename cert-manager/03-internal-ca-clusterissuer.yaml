@@ -1,0 +1,17 @@
+# This is the exact ClusterIssuer name values.yaml's ingress.clusterIssuer
+# field and templates/ingress.yaml's annotation already reference — until
+# this is applied, that annotation points at nothing and cert-manager will
+# never issue the TLS cert the Ingress asks for.
+#
+# kind: ca (as opposed to selfSigned or acme) means "sign using the cert
+# and key found in this Secret" — the Secret populated by
+# 02-internal-ca-certificate.yaml above. Every certificate issued by this
+# ClusterIssuer (i.e. every Ingress TLS cert cluster-wide that requests it)
+# is now signed by, and chains up to, this one internal CA.
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: internal-ca-issuer
+spec:
+  ca:
+    secretName: internal-ca-key-pair

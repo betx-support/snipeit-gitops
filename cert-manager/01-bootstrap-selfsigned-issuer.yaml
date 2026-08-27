@@ -1,0 +1,12 @@
+# This Issuer signs exactly one thing: the CA certificate itself (in
+# 02-internal-ca-certificate.yaml). It's the standard cert-manager
+# "bootstrap your own root" pattern — a self-signed Issuer that only ever
+# issues the one CA cert, after which everything else in the cluster is
+# signed by that CA via the ClusterIssuer in 03, not by this Issuer.
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-bootstrap
+  namespace: cert-manager
+spec:
+  selfSigned: {}

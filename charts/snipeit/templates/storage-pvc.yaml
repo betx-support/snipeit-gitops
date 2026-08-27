@@ -1,0 +1,13 @@
+# Name must stay exactly "snipeit-storage-pvc" — deployment.yaml (§2.4)
+# references this claim by hardcoded name, not a templated value.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: snipeit-storage-pvc
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: {{ .Values.storage.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.size }}

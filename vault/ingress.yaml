@@ -1,0 +1,46 @@
+# hashicorp/vault's Helm chart creates a SEPARATE Service, "vault-ui"
+# (distinct from the "vault" Service that ESO/other pods talk to for the
+# API), specifically meant to be fronted by an Ingress/LoadBalancer — that's
+# what this routes to. Requires ui.enabled=true in vault/01-install.sh
+# (already set).
+#
+# SECURITY NOTE — read before applying: this exposes the Vault login UI on
+# your internal network, same as Jenkins/ArgoCD/Snipe-IT. Vault is a
+# different risk category than the other three — it holds the actual
+# plaintext secret material (§6 of the CI/CD guide), not just an app or a
+# CI tool. Reasonable options, in increasing order of caution:
+#   1. Apply this as-is — acceptable if "internal network" already implies
+#      a trusted perimeter (VPN-only, no guest devices, etc.).
+#   2. Add an IP allowlist so only admin workstations can reach it:
+#      nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/24"
+#   3. Don't expose it via Ingress at all — use
+#      `kubectl port-forward -n vault svc/vault-ui 8200:8200` for admin
+#      access instead, and skip this file entirely. This is the most
+#      conservative option and costs nothing but a slightly less
+#      convenient login flow for whoever administers Vault.
+# This file ships as option 1; switch to 2 or 3 if your network doesn't
+# already provide that trust boundary.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vault-ui
+  namespace: vault
+  annotations:
+    cert-manager.io/cluster-issuer: "internal-ca-issuer"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: ["vault.internal.lan"]
+      secretName: vault-tls
+  rules:
+    - host: vault.internal.lan
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vault-ui
+                port:
+                  number: 8200
