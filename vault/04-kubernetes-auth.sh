@@ -9,7 +9,7 @@ kubectl exec -n vault vault-0 -- vault auth enable kubernetes
 kubectl exec -n vault vault-0 -- vault write auth/kubernetes/config \
   kubernetes_host="https://kubernetes.default.svc:443"
 
-kubectl exec -n vault vault-0 -- vault policy write snipeit-eso - <<'EOF'
+kubectl exec -i -n vault vault-0 -- vault policy write snipeit-eso - <<'EOF'
 path "snipeit/data/mysql" { capabilities = ["read"] }
 path "snipeit/data/app"   { capabilities = ["read"] }
 EOF
