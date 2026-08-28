@@ -125,7 +125,15 @@ bash jenkins/install.sh
 
 Configure the dynamic agent pod template (`jenkins/agent-pod-template.yaml`)
 under **Manage Jenkins → Clouds → Kubernetes → Pod Templates** (or re-run the
-install with `--set-file` pointing at it — either works).
+install with `--set-file` pointing at it — either works). This template now
+defines **two containers**: `helm` (renders/lints/packages the chart) and
+`kubeconform` (validates the rendered output) — the `Jenkinsfile`'s
+`Render & Validate` stage runs each half in its matching container via
+`container('helm') { ... }` / `container('kubeconform') { ... }`. If you add
+further tooling later, follow the same one-container-per-tool pattern rather
+than trying to install everything into one image — the kubeconform image
+specifically needs its `-alpine` tag variant to work as a Jenkins sidecar at
+all (see the comment in that file for why).
 
 Under **Manage Jenkins → Credentials**, add:
 - Git credentials (SSH key or token) scoped to this pipeline only

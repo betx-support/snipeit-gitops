@@ -1,6 +1,22 @@
 # §4.2 — Configure via Jenkins' Helm values (agent.podTemplates.default),
 # or in the UI under Manage Jenkins → Clouds. Fresh Pod per build, deleted
 # after — not an always-on static agent.
+#
+# Two containers, not one image with everything installed:
+#   - helm: renders/lints/packages the chart
+#   - kubeconform: validates the rendered output against the Kubernetes
+#     OpenAPI schema
+# All containers in a Jenkins Kubernetes-plugin Pod share the same
+# workspace volume automatically, so rendered.yaml written by the helm
+# container is visible to the kubeconform container without any extra
+# wiring — see Jenkinsfile's container('kubeconform') block.
+#
+# IMPORTANT: kubeconform's default image tag (e.g. :v0.6.7) is built
+# FROM scratch — no shell, no `cat`. Jenkins' Kubernetes plugin keeps a
+# container alive between steps via `command: ["cat"], tty: true`, which
+# needs a shell to exist. Use the "-alpine" tag variant specifically, or
+# the container will crash-loop immediately with no useful error beyond
+# "exec: cat: no such file or directory".
 agent:
   podTemplates:
     default: |
@@ -8,5 +24,9 @@ agent:
         containers:
         - name: helm
           image: alpine/helm:3.14.0
+          command: ["cat"]
+          tty: true
+        - name: kubeconform
+          image: ghcr.io/yannh/kubeconform:v0.6.7-alpine
           command: ["cat"]
           tty: true
