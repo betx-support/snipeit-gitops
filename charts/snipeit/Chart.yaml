@@ -2,4 +2,4 @@ apiVersion: v2
 name: snipeit
 description: Snipe-IT asset management, self-hosted on Kubernetes
 version: 0.1.0
-appVersion: "v7.1.9"
+appVersion: "v8.6.0"

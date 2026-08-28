@@ -1,6 +1,6 @@
 image:
   repository: snipe/snipe-it
-  tag: "v7.1.9"
+  tag: "v8.6.0"
   pullPolicy: IfNotPresent
 
 replicaCount: 1   # see companion doc §3.2 — pinned by RWO storage, not a template limitation

@@ -15,7 +15,7 @@
 # so this file intentionally mirrors values.yaml until those are supplied.
 
 image:
-  tag: "v7.1.9"
+  tag: "v8.6.0"
 
 ingress:
   host: "assets.internal.lan"
