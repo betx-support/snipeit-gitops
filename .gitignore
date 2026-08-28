@@ -1,0 +1,4 @@
+vault-init-output.txt
+internal-ca.crt
+*.key
+*.pem
