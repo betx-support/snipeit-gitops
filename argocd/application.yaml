@@ -6,7 +6,7 @@ metadata:
 spec:
   project: snipeit-project
   source:
-    repoURL: https://your-git-server/snipeit-gitops.git
+    repoURL: https://github.com/betx-support/snipeit-gitops.git
     targetRevision: main
     path: charts/snipeit
     helm:
