@@ -6,7 +6,7 @@ image:
 replicaCount: 1   # see companion doc §3.2 — pinned by RWO storage, not a template limitation
 
 app:
-  url: "https://assets.internal.lan"
+  url: "https://assets.internal.lan:30443"
   timezone: "UTC"
   debug: false
 

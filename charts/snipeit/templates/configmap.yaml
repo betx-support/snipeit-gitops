@@ -20,3 +20,4 @@ data:
   REDIS_PORT: "6379"
   CACHE_DRIVER: "redis"
   SESSION_DRIVER: "redis"
+  APP_TRUSTED_PROXIES: "*"
