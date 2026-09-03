@@ -32,6 +32,14 @@ spec:
           envFrom:
             - configMapRef: { name: snipeit-config }
             - secretRef: { name: snipeit-app-secret }
+            - name: MAIL_FROM_NAME
+              value: "BetXchange IT Support"
+            - name: MAIL_FROM_ADDR
+              value: "itsupport@betxchange.co.za"
+            - name: MAIL_REPLYTO_NAME
+              value: "BetXchange IT Support"
+            - name: MAIL_REPLYTO_ADDR
+              value: "it@betxchange.co.za"
           volumeMounts:
             - name: snipeit-storage
               mountPath: /var/lib/snipeit/storage
