@@ -21,3 +21,7 @@ data:
   CACHE_DRIVER: "redis"
   SESSION_DRIVER: "redis"
   APP_TRUSTED_PROXIES: "*"
+  MAIL_FROM_NAME: "BetXchange IT Support"
+  MAIL_FROM_ADDR: "itsupport@betxchange.co.za"
+  MAIL_REPLYTO_NAME: "BetXchange IT Support"
+  MAIL_REPLYTO_ADDR: "it@betxchange.co.za"
