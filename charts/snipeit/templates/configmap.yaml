@@ -21,6 +21,11 @@ data:
   CACHE_DRIVER: "redis"
   SESSION_DRIVER: "redis"
   APP_TRUSTED_PROXIES: "*"
+  # Mail Settings
+  MAIL_DRIVER: "smtp"
+  MAIL_HOST: "smtp.office365.com"
+  MAIL_PORT: "587"
+  MAIL_ENCRYPTION: "tls"
   MAIL_FROM_NAME: "BetXchange IT Support"
   MAIL_FROM_ADDR: "itsupport@betxchange.co.za"
   MAIL_REPLYTO_NAME: "BetXchange IT Support"
